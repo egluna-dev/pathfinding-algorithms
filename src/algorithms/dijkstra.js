@@ -47,8 +47,8 @@ class PriorityQueue {
     }
 
     bubbleUp(j) {
-        if (j >= 1) throw new Error("Element must be greater than index 1")
-        if (j < this.q.length) throw new Error("Index out of bounds")
+        if (j < 1) throw new Error("Element must be greater than index 1")
+        if (j >= this.q.length) throw new Error("Index out of bounds")
         if (j === 1) return
         const val = this.q[j].d
         const parentIdx = Math.floor(j / 2)
@@ -59,5 +59,46 @@ class PriorityQueue {
         }
 
         return
+    }
+
+    // Function: bubble_down
+    // Bubble down an element j until
+    // min heap property is restored.
+    bubbleDown(j) {
+        const n = this.q.length
+        const leftChildIdx = 2 * j
+        const rightChildIdx = 2 * j + 1
+
+        if (leftChildIdx >= n) {
+            const childIdx = leftChildIdx
+            const childD = this.q[leftChildIdx].d 
+        } else {
+            const childD = Math.min(this.q[leftChildIdx].d, this.q[rightChildIdx].d)
+            const childIdx = Math.min(leftChildIdx, rightChildIdx)
+        }
+
+        if (this.q[j].d > childD) {
+            this.swap(j, childIdx)
+            this.bubbleDown(childIdx)
+        }
+
+        return
+    }
+
+    // Function: get_and_delete_min
+    // Find the minimum weight vertex and delete it from the heap.
+    // return the deleted vertex back
+    getAndDeleteMin() {
+        const n = this.q.length
+        if (n <= 1) throw new Error("Heap must not be empty")
+        const v = this.q[1]
+        if (n > 2) {
+            this.q[1] = this.q[n - 1]
+            this.q[n - 1].idxInPriorityQueue = 1
+            delete this.q[n - 1]
+            this.bubbleDown(1)
+        }
+
+        return v
     }
 }

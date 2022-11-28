@@ -7,18 +7,18 @@ const PathfindingVisualizer = () => {
         // Row: x
         // Column: y
         let nodes = []
-        for (let row = 0; row < 40; row++) {
-            let currentRow = []
-            for (let col = 0; col < 50; col++) {
+        for (let col = 0; col < 40; col++) {
+            let currentCol = []
+            for (let row = 0; row < 50; row++) {
                 const currentNode = {
                     row,
                     col,
                     isSource: row === 10 && col === 5,
-                    isDestination: row === 10 && col === 45
+                    isDestination: row === 10 && col === 20
                 }
-                currentRow.push(currentNode)
+                currentCol.push(currentNode)
             }
-            nodes.push(currentRow)
+            nodes.push(currentCol)
         }
         setNodes(nodes)
     }
