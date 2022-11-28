@@ -1,8 +1,12 @@
-class Vertex {
+// NOTE: Node and Vertex are completely interchangeable terms here
+
+const WEIGHT = 1
+
+class Node {
     constructor(x, y) {
         this.x = x
         this.y = y
-        this.d = Infinity
+        this.dist = Infinity
         this.processed = false
         this.idxInPriorityQueue = -1
         this.parent = null
@@ -50,9 +54,9 @@ class PriorityQueue {
         if (j < 1) throw new Error("Element must be greater than index 1")
         if (j >= this.q.length) throw new Error("Index out of bounds")
         if (j === 1) return
-        const val = this.q[j].d
+        const val = this.q[j].dist
         const parentIdx = Math.floor(j / 2)
-        const parentVal = this.q[parentIdx].d
+        const parentVal = this.q[parentIdx].dist
         if (val < parentVal) {
             this.swap(j, parentIdx)
             this.bubbleUp(parentIdx)
@@ -69,12 +73,15 @@ class PriorityQueue {
         const leftChildIdx = 2 * j
         const rightChildIdx = 2 * j + 1
 
+        let childIdx = null
+        let childD = null
+
         if (leftChildIdx >= n) {
-            const childIdx = leftChildIdx
-            const childD = this.q[leftChildIdx].d 
+            childIdx = leftChildIdx
+            childD = this.q[leftChildIdx].d 
         } else {
-            const childD = Math.min(this.q[leftChildIdx].d, this.q[rightChildIdx].d)
-            const childIdx = Math.min(leftChildIdx, rightChildIdx)
+            childD = Math.min(this.q[leftChildIdx].d, this.q[rightChildIdx].d)
+            childIdx = Math.min(leftChildIdx, rightChildIdx)
         }
 
         if (this.q[j].d > childD) {
@@ -101,4 +108,107 @@ class PriorityQueue {
 
         return v
     }
+
+    // Check if the heap is empty
+    isEmpty() {
+        return this.q.length === 1
+    }
+
+    // This is a useful function since in Dijkstra
+    // the weight of a vertex updates on the fly.
+    // We will need to call this to update the vertex weight.
+    updateVertexWeight(v) {
+        const j = v.idxInPriorityQueue
+        const n = this.q.length
+        if (j < 0 || j > n) throw new Error("j must be >= 0 and < n")
+
+        this.bubbleDown(j)
+        this.bubbleUp(j)
+    }
+}
+
+class Graph {
+    constructor(adjList, verts) {
+        this.adjList = adjList
+        this.verts = verts
+    }
+
+    getVertexFromCoords(i, j) {
+        if (i !== this.verts['x'] || j !== this.verts['y']) throw new Error("Vertex not found")
+        if (this.verts['x'] === i && this.verts['y'] === j) {
+            return this.verts['vertex']
+        }
+    }
+
+    getListOfNeighbours(vert) {
+        let coords = [vert.x, vert.y]
+        if (coords[0] === this.adjList['vertex'].x && coords[1] === this.adjList['vertex'].y) {
+            return this.adjList['vertices']
+        }
+    }
+}
+
+// Function: computeShortestPath
+// Let us implement Dijkstra's algorithm
+// graph - instance of the DirectedGraphFromImage class
+// source - a vertex that is the source (i,j) pixel coordinates
+// dest - a vertex that is the destination (i,j) pixel coordinates
+// sx, sy: x and y of source node
+// dx, dy: x and y of destination node
+export const dijkstra = (graph, source, destination) => {
+    const Heap = new PriorityQueue()
+    source.dist = 0
+    Heap.insert(source)
+
+    let distance
+
+    while (!Heap.isEmpty()) {
+        let u = Heap.getAndDeleteMin()
+        u.processed = true
+
+        if (u.x === destination.x && u.y === destination.y) {
+            distance += u.dist
+            break
+        }
+
+        let neighbouringNodes = getAllNodes(graph)
+        sortNodesByDistance(neighbouringNodes)
+        for (let vertex in neighbouringNodes) {
+            if (!vertex.processed && (u.dist + WEIGHT < vertex.dist)) {
+                vertex.dist = u.dist + WEIGHT
+                vertex.parent = u
+                Heap.insert(vertex)
+                Heap.updateVertexWeight(vertex)
+            }
+        }
+    }
+
+}
+
+const sortNodesByDistance = (unvisitedNodes) => {
+    unvisitedNodes.sort((nodeA, nodeB) => nodeA.dist - nodeB.dist)
+}
+
+const getAllNodes = (graph) => {
+    const nodes = []
+
+    for (let col of graph) {
+        for (let node of col) {
+            nodes.push(node)
+        }
+    }
+
+    return nodes
+}
+
+export const getShortestPath = (destinationNode) => {
+    let currentNode = destinationNode
+    let path = []
+
+    while (currentNode.parent !== null) {
+        path.unshift(currentNode)
+        currentNode = currentNode.parent
+    }
+
+    return path
 }

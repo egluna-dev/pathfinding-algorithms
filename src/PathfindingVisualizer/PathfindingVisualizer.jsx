@@ -44,7 +44,7 @@ const PathfindingVisualizer = () => {
                             </select>
                         </li>
                         <li><button>Set Source Node</button></li>
-                        <li><button>Set Destionation Node</button></li>
+                        <li><button>Set Destination Node</button></li>
                         <li><button>Start</button></li>
                         <li><button>Pause</button></li>
                         <li><button>Stop</button></li>
