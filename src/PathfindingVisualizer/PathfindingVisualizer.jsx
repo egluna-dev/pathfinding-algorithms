@@ -3,8 +3,6 @@ import { useState, useEffect } from 'react'
 
 const PathfindingVisualizer = () => {
     const [nodes, setNodes] = useState([])
-    const [source, setSource] = useState()
-    // const [mouseHover, setMouseHover] = useState(false)
     const createGrid = () => {
         // Row: x
         // Column: y
