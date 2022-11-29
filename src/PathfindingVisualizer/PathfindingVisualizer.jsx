@@ -1,12 +1,13 @@
 import Node from "./Node/Node"
 import { useState, useEffect, useCallback } from 'react'
+import { dijkstra } from "../algorithms/dijkstra"
 
-const NUM_ROWS = 25
-const NUM_COLS = 40
-const SOURCE_NODE_ROW = 25
-const SOURCE_NODE_COL = 30
-const DESTINATION_NODE_ROW = 30
-const DESTINATION_NODE_COL = 40
+const NUM_ROWS = 20
+const NUM_COLS = 30
+const SOURCE_NODE_ROW = 10
+const SOURCE_NODE_COL = 10
+const DESTINATION_NODE_ROW = 6
+const DESTINATION_NODE_COL = 28
 
 const createNode = (col, row) => {
     return {
@@ -23,7 +24,7 @@ const createNode = (col, row) => {
 }
 
 const createInitialGraph = () => {
-    // Columns: x direciton
+    // Columns: x direction
     // Rows: y direction
     let graphNodes = []
     for (let col = 0; col < NUM_COLS; col++) {
@@ -38,7 +39,6 @@ const createInitialGraph = () => {
 
 const getNewGraphWithWall = (graphNodes, col, row) => {
     const newGraph = graphNodes
-    console.log(graphNodes[col][row])
     const graphNode = newGraph[col][row]
     const newGraphNode = {
         ...graphNode,
@@ -59,9 +59,22 @@ const PathfindingVisualizer = () => {
         setMousePressed((prevState) => !prevState)
     }, [graphNodes])
 
+    const onMouseEnterHandler = useCallback((col, row) => {
+        if (!mousePressed) return
+
+        const newGraphNodes = getNewGraphWithWall(graphNodes, col, row)
+        setGraphNodes(newGraphNodes)
+    }, [mousePressed, graphNodes])
+
     const onMouseUpHandler = () => {
         setMousePressed(false)
-        console.log("mouse pressed", mousePressed)
+    }
+
+    const startVisualization = () => {
+        // console.log(graphNodes[0][5]["IdxInPriorityQueue"])
+        // console.log(graphNodes[0][5]["parent"])
+        const sourceNode = graphNodes[SOURCE_NODE_COL][SOURCE_NODE_ROW]
+        const destNode = graphNodes[DESTINATION_NODE_COL][DESTINATION_NODE_ROW]
     }
 
     useEffect(() => {
@@ -73,7 +86,7 @@ const PathfindingVisualizer = () => {
         <main className="container">
             <div className="header">
                 <nav className="navbar">
-                    <h2>Tinh's App</h2>
+                    <h2>Pathfinder Algorithms</h2>
                     <ul className="settings-nav">
                         <li>
                             <select name="algorithm" id="algorithm">
@@ -84,7 +97,7 @@ const PathfindingVisualizer = () => {
                         </li>
                         <li><button>Set Source Node</button></li>
                         <li><button>Set Destination Node</button></li>
-                        <li><button>Start</button></li>
+                        <li><button onClick={startVisualization}>Start</button></li>
                         <li><button>Pause</button></li>
                         <li><button>Stop</button></li>
                     </ul>
@@ -95,18 +108,19 @@ const PathfindingVisualizer = () => {
                     return (
                         <div key={colIdx}>
                             {col.map((graphNode, nodeIdx) => {
-                                const { col, row, isSource, isDestination, isWall, parent } = graphNode;
-                                // console.log("I am in the node component", row, col)
+                                const { col, row, distance, isSource, isDestination, isWall, parent } = graphNode;
                                 return (
                                     <Node
                                         key={nodeIdx}
                                         col={row}
                                         row={col}
+                                        distance={distance}
                                         isSource={isSource}
                                         isDestination={isDestination}
-                                        // onClick={e => console.log(e.target.row)}
+                                        onClick={(e) => console.log(col, row)}
                                         onMouseUp={(col, row) => onMouseUpHandler(col, row)}
                                         onMouseDown={(col, row) => onMouseDownHandler(col, row)}
+                                        onMouseEnter={(col, row) => onMouseEnterHandler(col, row)}
                                         isWall={isWall}
                                         parent={parent}
                                     />

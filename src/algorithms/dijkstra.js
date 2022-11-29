@@ -109,26 +109,26 @@ export class PriorityQueue {
     }
 }
 
-class Graph {
-    constructor(adjList, verts) {
-        this.adjList = adjList
-        this.verts = verts
-    }
+// class Graph {
+//     constructor(adjList, verts) {
+//         this.adjList = adjList
+//         this.verts = verts
+//     }
 
-    getVertexFromCoords(i, j) {
-        if (i !== this.verts['x'] || j !== this.verts['y']) throw new Error("Vertex not found")
-        if (this.verts['x'] === i && this.verts['y'] === j) {
-            return this.verts['vertex']
-        }
-    }
+//     getVertexFromCoords(i, j) {
+//         if (i !== this.verts['x'] || j !== this.verts['y']) throw new Error("Vertex not found")
+//         if (this.verts['x'] === i && this.verts['y'] === j) {
+//             return this.verts['vertex']
+//         }
+//     }
 
-    getListOfNeighbours(vert) {
-        let coords = [vert.x, vert.y]
-        if (coords[0] === this.adjList['vertex'].x && coords[1] === this.adjList['vertex'].y) {
-            return this.adjList['vertices']
-        }
-    }
-}
+//     getListOfNeighbours(vert) {
+//         let coords = [vert.x, vert.y]
+//         if (coords[0] === this.adjList['vertex'].x && coords[1] === this.adjList['vertex'].y) {
+//             return this.adjList['vertices']
+//         }
+//     }
+// }
 
 // Function: computeShortestPath
 // Let us implement Dijkstra's algorithm
@@ -139,25 +139,25 @@ class Graph {
 // dx, dy: x and y of destination node
 export const dijkstra = (graph, source, destination) => {
     const Heap = new PriorityQueue()
-    source.dist = 0
+    source.distance = 0
     Heap.insert(source)
 
-    let distance
+    let totalDistance = 0
 
     while (!Heap.isEmpty()) {
         let u = Heap.getAndDeleteMin()
         u.processed = true
 
-        if (u.x === destination.x && u.y === destination.y) {
-            distance += u.dist
+        if (u.col === destination.col && u.row === destination.row) {
+            totalDistance += u.distance
             break
         }
 
-        let neighbouringNodes = getAllNodes(graph)
+        let neighbouringNodes = getNeighbouringNodes(graph)
         sortNodesByDistance(neighbouringNodes)
         for (let vertex in neighbouringNodes) {
-            if (!vertex.processed && (u.dist + WEIGHT < vertex.dist)) {
-                vertex.dist = u.dist + WEIGHT
+            if (!vertex.processed && (u.distance + WEIGHT < vertex.distance)) {
+                vertex.distance = u.distance + WEIGHT
                 vertex.parent = u
                 Heap.insert(vertex)
                 Heap.updateVertexWeight(vertex)
@@ -165,25 +165,35 @@ export const dijkstra = (graph, source, destination) => {
         }
     }
 
+    const shortestPathArray = getShortestPath(destination)
+
+    return {
+        shortestPathArray,
+        totalDistance
+    }
 }
 
 const sortNodesByDistance = (unvisitedNodes) => {
     unvisitedNodes.sort((nodeA, nodeB) => nodeA.dist - nodeB.dist)
 }
 
-const getAllNodes = (graph) => {
+const getNeighbouringNodes = (currentNode, graph) => {
     const nodes = []
 
-    for (let col of graph) {
-        for (let node of col) {
-            nodes.push(node)
-        }
-    }
+    const {col, row } = currentNode
+    // Add top neighbouring node
+    if (row > 0) nodes.push(graph[col][row - 1])
+    // Add right neighbouring node
+    if (col < graph[0].length - 1) nodes.push(graph[col + 1][row])
+    // Add bottom neighbouring node
+    if (row < graph.length - 1) nodes.push(graph[col][row + 1])
+    // Add left neighbouring node
+    if (col > 0) nodes.push(graph[col - 1][row])
 
     return nodes
 }
 
-export const getShortestPath = (destinationNode) => {
+const getShortestPath = (destinationNode) => {
     let currentNode = destinationNode
     let path = []
 

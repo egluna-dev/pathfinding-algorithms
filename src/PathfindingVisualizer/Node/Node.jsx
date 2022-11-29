@@ -4,14 +4,15 @@ const Node = (props) => {
     const {
         col,
         row,
+        distance,
         isSource,
         isDestination,
         isWall,
         parent,
-        onClick,
-        onMouseDown
-        // onMouseEnter,
-        // onMouseUp,
+        onMouseDown,
+        onMouseEnter,
+        onMouseUp,
+        onClick
     } = props
     // const [isSource, setIsSource] = useState(false)
     // const [isDestination, setIsDestination] = useState(false)
@@ -21,12 +22,13 @@ const Node = (props) => {
     return (
         <div
             className={`node ${nodeClass}`}
-            onClick={onClick}
             id={`node-${row}-${col}`}
+            distance={distance}
             onMouseDown={() => onMouseDown(row, col)}
             parent={parent}
-        // onMouseEnter={() => onMouseEnter(row, col)}
-        // onMouseUp={() => onMouseUp()}
+            onMouseEnter={() => onMouseEnter(row, col)}
+            onMouseUp={() => onMouseUp()}
+            onClick={onClick}
         >
         </ div>
     )
