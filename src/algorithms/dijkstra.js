@@ -2,26 +2,8 @@
 
 const WEIGHT = 1
 
-class Node {
-    constructor(x, y) {
-        this.x = x
-        this.y = y
-        this.dist = Infinity
-        this.processed = false
-        this.idxInPriorityQueue = -1
-        this.parent = null
-    }
-
-    reset() {
-        this.d = Infinity
-        this.processed = false
-        this.idxInPriorityQueue = -1
-        this.parent = null
-    }
-}
-
 // Priority Queue used in Dijsktra's algorithm
-class PriorityQueue {
+export class PriorityQueue {
     constructor() {
         this.q = [null] // Pad it with one element to start index at 1
     }

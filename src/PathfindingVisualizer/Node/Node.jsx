@@ -7,23 +7,26 @@ const Node = (props) => {
         isSource,
         isDestination,
         isWall,
-        onMouseDown,
-        onMouseEnter,
-        onMouseUp,
+        parent,
+        onClick,
+        onMouseDown
+        // onMouseEnter,
+        // onMouseUp,
     } = props
     // const [isSource, setIsSource] = useState(false)
     // const [isDestination, setIsDestination] = useState(false)
 
-    const nodeClass = isSource ? 'node-source' : isDestination ? 'node-destination' : isWall && 'node-wall'
+    const nodeClass = isSource ? 'node-source' : isDestination ? 'node-destination' : isWall ? 'node-wall' : ''
 
     return (
         <div
             className={`node ${nodeClass}`}
-            onClick={() => !isSource}
+            onClick={onClick}
             id={`node-${row}-${col}`}
             onMouseDown={() => onMouseDown(row, col)}
-            onMouseEnter={() => onMouseEnter(row, col)}
-            onMouseUp={() => onMouseUp()}
+            parent={parent}
+        // onMouseEnter={() => onMouseEnter(row, col)}
+        // onMouseUp={() => onMouseUp()}
         >
         </ div>
     )

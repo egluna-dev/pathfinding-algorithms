@@ -25,7 +25,7 @@ body {
   margin: 1rem auto;
 }
 
-.settings {
+.settings-nav {
   display: flex;
   width: 80%;
   flex-direction: row;
@@ -43,10 +43,14 @@ body {
 }
 
 .node {
-  border: 1px solid black;
+  border: 1px solid #72ACC2;
   padding: 0.75rem;
   margin: 0.5px;
   transition: all 100ms ease-in-out;
+}
+
+.node-wall {
+  background-color: blue;
 }
 
 .node-source {
@@ -58,5 +62,5 @@ body {
 }
 
 .node:hover {
-  background-color: grey;
+  background-color: #EEE;
 }
