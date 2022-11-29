@@ -44,13 +44,22 @@ body {
 
 .node {
   border: 1px solid #72ACC2;
+  border-radius: 15%;
   padding: 0.75rem;
   margin: 0.5px;
   transition: all 100ms ease-in-out;
 }
 
 .node-wall {
-  background-color: blue;
+  background-color: firebrick;
+}
+
+.node-shortest-path {
+  background-color: goldenrod;
+}
+
+.node-processed {
+  background-color: aquamarine;
 }
 
 .node-source {
@@ -58,7 +67,7 @@ body {
 }
 
 .node-destination {
-  background-color: darkred;
+  background-color: greenyellow;
 }
 
 .node:hover {

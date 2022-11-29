@@ -1,13 +1,13 @@
 import Node from "./Node/Node"
 import { useState, useEffect, useCallback } from 'react'
-import { dijkstra } from "../algorithms/dijkstra"
+import { dijkstra, getShortestPath } from "../algorithms/dijkstra"
 
-const NUM_ROWS = 20
-const NUM_COLS = 30
-const SOURCE_NODE_ROW = 10
-const SOURCE_NODE_COL = 10
-const DESTINATION_NODE_ROW = 6
-const DESTINATION_NODE_COL = 28
+const NUM_ROWS = 40
+const NUM_COLS = 40
+const SOURCE_NODE_ROW = 2
+const SOURCE_NODE_COL = 2
+const DESTINATION_NODE_ROW = 35
+const DESTINATION_NODE_COL = 29
 
 const createNode = (col, row) => {
     return {
@@ -19,7 +19,7 @@ const createNode = (col, row) => {
         isProcessed: false,
         isWall: false,
         parent: null,
-        IdxInPriorityQueue: -1
+        idxInPriorityQueue: -1
     }
 }
 
@@ -70,12 +70,47 @@ const PathfindingVisualizer = () => {
         setMousePressed(false)
     }
 
-    const startVisualization = () => {
+    const dijkstraAnimation = (visitedNodesSequence, shortestPathSequence) => {
+        for (let i = 0; i < visitedNodesSequence.length; i++) {
+            if (i === visitedNodesSequence.length) {
+                setTimeout(() => {
+                    shortesPathAnimation(shortestPathSequence)
+                }, (10 * i))
+                return
+            }
+
+            setTimeout(() => {
+                const node = visitedNodesSequence[i]
+                document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-processed'
+            }, (10 * i))
+        }
+    }
+
+    const shortesPathAnimation = (shortestPathSequence) => {
+        for (let i = 0; i < shortestPathSequence.length; i++) {
+            setTimeout(() => {
+                const node = shortestPathSequence[i]
+                document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-shortest-path'
+            })
+        }
+    }
+
+    const startDijkstraVisualization = () => {
         // console.log(graphNodes[0][5]["IdxInPriorityQueue"])
         // console.log(graphNodes[0][5]["parent"])
         const sourceNode = graphNodes[SOURCE_NODE_COL][SOURCE_NODE_ROW]
         const destNode = graphNodes[DESTINATION_NODE_COL][DESTINATION_NODE_ROW]
+
+        const visitedNodesSequence = dijkstra(graphNodes, sourceNode, destNode)
+        const shortestPathSequence = getShortestPath(destNode)
+
+        console.log(visitedNodesSequence)
+        console.log(shortestPathSequence)
+
+        dijkstraAnimation(visitedNodesSequence, shortestPathSequence)
     }
+
+
 
     useEffect(() => {
         const graph = createInitialGraph()
@@ -97,9 +132,10 @@ const PathfindingVisualizer = () => {
                         </li>
                         <li><button>Set Source Node</button></li>
                         <li><button>Set Destination Node</button></li>
-                        <li><button onClick={startVisualization}>Start</button></li>
+                        <li><button onClick={startDijkstraVisualization}>Start</button></li>
                         <li><button>Pause</button></li>
                         <li><button>Stop</button></li>
+                        <li><button>Reset</button></li>
                     </ul>
                 </nav>
             </div>
@@ -117,7 +153,6 @@ const PathfindingVisualizer = () => {
                                         distance={distance}
                                         isSource={isSource}
                                         isDestination={isDestination}
-                                        onClick={(e) => console.log(col, row)}
                                         onMouseUp={(col, row) => onMouseUpHandler(col, row)}
                                         onMouseDown={(col, row) => onMouseDownHandler(col, row)}
                                         onMouseEnter={(col, row) => onMouseEnterHandler(col, row)}
