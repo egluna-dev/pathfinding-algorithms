@@ -104,13 +104,8 @@ const PathfindingVisualizer = () => {
         const visitedNodesSequence = dijkstra(graphNodes, sourceNode, destNode)
         const shortestPathSequence = getShortestPath(destNode)
 
-        console.log(visitedNodesSequence)
-        console.log(shortestPathSequence)
-
         dijkstraAnimation(visitedNodesSequence, shortestPathSequence)
     }
-
-
 
     useEffect(() => {
         const graph = createInitialGraph()
